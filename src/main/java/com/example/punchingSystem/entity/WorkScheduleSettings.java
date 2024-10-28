@@ -1,8 +1,11 @@
 package com.example.punchingSystem.entity;
 
+import com.example.punchingSystem.workshiftEnum.WorkDays;
 import com.example.punchingSystem.workshiftEnum.WorkShift;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +24,9 @@ public class WorkScheduleSettings {
     @Column(name = "work_shift")
     private WorkShift workShift;
 
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(targetClass = WorkDays.class)
+    @CollectionTable(name = "work_schedule_days", joinColumns = @JoinColumn(name = "user_email"))
     @Column(name = "office_days")
-    private String officeDays;
+    private List<WorkDays> officeDays;
 }
