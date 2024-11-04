@@ -52,7 +52,7 @@ public class DataLoader implements CommandLineRunner {
             workScheduleSettingsRepository.save(workSchedule2);
 
             WorkScheduleSettings workSchedule3 = new WorkScheduleSettings();
-            workSchedule3.setUserEmail("deepankshiarora5359@gmail.com");
+            workSchedule3.setUserEmail("dheerajmadan@tothenew.com");
             workSchedule3.setProject(projectRepository.findById(1L).orElse(null));
             workSchedule3.setWorkShift(WorkShift.NIGHT_SHIFT);;
             workSchedule3.setOfficeDays(Arrays.asList(MONDAY, TUESDAY));

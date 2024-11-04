@@ -1,13 +1,12 @@
 package com.example.punchingSystem.controller.punchlog;
 
+import com.example.punchingSystem.impl.punchlog.PunchLogServiceImpl;
+import com.example.punchingSystem.scheduler.PunchLogScheduler;
 import com.example.punchingSystem.service.punchlog.PunchLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -15,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class PunchLogController {
     @Autowired
     private PunchLogService punchLogService;
+    @Autowired
+    private PunchLogScheduler scheduler;
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadPunchLogs(@RequestParam("file") MultipartFile file) {
@@ -25,5 +26,11 @@ public class PunchLogController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error processing the punch logs: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test(){
+        scheduler.identifyAndReportDefaulters();
+        return null;
     }
 }

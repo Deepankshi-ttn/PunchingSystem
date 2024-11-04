@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -20,5 +21,5 @@ public class PunchLog {
     private WorkScheduleSettings workScheduleSettings;
 
     @Column(name = "punch_time")
-    private Date punchTime;
+    private LocalDateTime punchTime;
 }
