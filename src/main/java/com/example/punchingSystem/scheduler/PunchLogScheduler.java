@@ -1,6 +1,7 @@
 package com.example.punchingSystem.scheduler;
 
-import com.example.punchingSystem.NotificationSender;
+import com.example.punchingSystem.dto.Defaulter;
+import com.example.punchingSystem.emailSender.NotificationSender;
 import com.example.punchingSystem.entity.Project;
 import com.example.punchingSystem.entity.PunchLog;
 import com.example.punchingSystem.entity.WorkScheduleSettings;
@@ -14,9 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -44,6 +43,7 @@ public class PunchLogScheduler {
 
         Map<String, List<PunchLog>> userPunchLogs = punchLogs.stream()
                 .collect(Collectors.groupingBy(punchLog -> punchLog.getWorkScheduleSettings().getUserEmail()));
+        Map<String, List<Defaulter>> defaulterMap = new HashMap<>();
 
         userPunchLogs.forEach((userEmail, logs) -> {
             logs.sort(Comparator.comparing(PunchLog::getPunchTime));
@@ -62,14 +62,23 @@ public class PunchLogScheduler {
                     Project project = settings.getProject();
                     String managerEmail = project.getReportingManagerEmail();
 
-                    System.out.println("Defaulter: " + userEmail + ", Hours Worked: " + workHours + ", Manager: " + managerEmail);
+                    List<Defaulter> updatedEmployeeList = defaulterMap.getOrDefault(managerEmail, new ArrayList<Defaulter>());
+                    updatedEmployeeList.add(Defaulter.builder()
+                            .hoursLogged(workHours)
+                            .userEmail(userEmail)
+                            .build());
+                    defaulterMap.put(managerEmail, updatedEmployeeList);
+
+
+
+//                    System.out.println("Defaulter: " + userEmail + ", Hours Worked: " + workHours + ", Manager: " + managerEmail);
 
                     // TODO: logic to email this data to managers
                 }
             }
         });
         // Testing SMTP connection
-        notificationSender.sendNotification();
+        notificationSender.sendNotification(defaulterMap);
         System.out.println("Async email");
     }
 
